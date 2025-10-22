@@ -1,5 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
-
-
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\BuildingBlock\BuildingBlock.Common.Presentation\BuildingBlock.Common.Presentation.csproj" />
+    <ProjectReference Include="..\User.Module.Application\User.Module.Application.csproj" />
+  </ItemGroup>
 </Project>
