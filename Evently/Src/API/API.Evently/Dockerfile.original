@@ -13,14 +13,6 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["Directory.Build.props", "."]
 COPY ["Src/API/API.Evently/API.Evently.csproj", "Src/API/API.Evently/"]
-COPY ["Src/BuildingBlock/BuildingBlock.Common.InfraStructure/BuildingBlock.Common.InfraStructure.csproj", "Src/BuildingBlock/BuildingBlock.Common.InfraStructure/"]
-COPY ["Src/BuildingBlock/BuildingBlock.Common.Application/BuildingBlock.Common.Application.csproj", "Src/BuildingBlock/BuildingBlock.Common.Application/"]
-COPY ["Src/BuildingBlock/BuildingBlock.Common.Domain/BuildingBlock.Common.Domain.csproj", "Src/BuildingBlock/BuildingBlock.Common.Domain/"]
-COPY ["Src/Module/User/User.Module.Infrastructure/User.Module.Infrastructure.csproj", "Src/Module/User/User.Module.Infrastructure/"]
-COPY ["Src/Module/User/User.Module.Application/User.Module.Application.csproj", "Src/Module/User/User.Module.Application/"]
-COPY ["Src/Module/User/User.Module.Domain/User.Module.Domain.csproj", "Src/Module/User/User.Module.Domain/"]
-COPY ["Src/Module/User/User.Module.Presentation/User.Module.Presentation.csproj", "Src/Module/User/User.Module.Presentation/"]
-COPY ["Src/BuildingBlock/BuildingBlock.Common.Presentation/BuildingBlock.Common.Presentation.csproj", "Src/BuildingBlock/BuildingBlock.Common.Presentation/"]
 RUN dotnet restore "./Src/API/API.Evently/API.Evently.csproj"
 COPY . .
 WORKDIR "/src/Src/API/API.Evently"

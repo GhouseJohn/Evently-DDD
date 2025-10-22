@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Routing;
 using User.Module.Application.Repo.CreateUser;
 
 namespace User.Module.Presentation.User.Create;
-internal class CreateUserCommandHandlerEndpoint : IEndpoint
+internal sealed class CreateUserCommandHandlerEndpoint : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {

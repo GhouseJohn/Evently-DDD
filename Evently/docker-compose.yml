@@ -1,0 +1,19 @@
+﻿services:
+  api.evently:
+    image: ${DOCKER_REGISTRY-}apievently
+    build:
+      context: .
+      dockerfile: Src/API/API.Evently/Dockerfile
+    ports:
+      - 5000:8080
+      - 5001:8081
+  evently.database:
+    image: postgres:latest
+    environment:
+      - POSTGRES_DB=eventsetupDb
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+    - ./containers/db/init:/docker-entrypoint-initdb.d
+    ports:
+      - 5434:5432

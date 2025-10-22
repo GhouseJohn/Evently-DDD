@@ -1,8 +1,10 @@
-﻿using BuildingBlock.Common.Domain;
+﻿using System.ComponentModel.DataAnnotations;
+using BuildingBlock.Common.Domain;
 
 namespace User.Module.Domain.Models;
 public sealed class UserModel : Entity
 {
+    [Key]
     public Guid UserId { get; set; }
     public string UserName { get; set; }
     public string Email { get; set; }
