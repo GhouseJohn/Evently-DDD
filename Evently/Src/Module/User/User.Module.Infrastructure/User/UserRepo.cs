@@ -25,8 +25,11 @@ internal sealed class UserRepo : IUserRepo
         }
     }
 
-    public Task<UserModel> GetAllUser(Guid Id, CancellationToken cancellationToken = default)
+    public async Task<UserModel> GetAllUser(Guid Id, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        UserModel? result = await (from n in _dbContext.EventUser
+                                   where n.UserId == Id
+                                   select n).FirstOrDefaultAsync(cancellationToken);
+        return result;
     }
 }

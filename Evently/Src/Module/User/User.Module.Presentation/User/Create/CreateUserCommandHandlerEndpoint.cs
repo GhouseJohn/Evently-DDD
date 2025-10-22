@@ -18,7 +18,7 @@ internal sealed class CreateUserCommandHandlerEndpoint : IEndpoint
                                                      requestDTo.Email,
                                                      requestDTo.Address), cancellationToken);
             return result.Match(Results.Ok, ApiResults.Problem);
-        });
+        }).WithTags(Tags.Users);
     }
 }
 
