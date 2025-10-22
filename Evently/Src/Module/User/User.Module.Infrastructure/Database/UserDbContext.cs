@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using BuildingBlock.Common.InfraStructure.outbox;
+using Microsoft.EntityFrameworkCore;
 using User.Module.Application;
 using User.Module.Domain.Models;
 
@@ -11,6 +12,9 @@ public sealed class UserDbContext : DbContext, IUnitOfWork
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema(Schemas.Events);
+
+        modelBuilder.ApplyConfiguration(new OutboxMessageConfiguration());
+        modelBuilder.ApplyConfiguration(new OutboxMessageConsumerConfiguration());
     }
 }
 

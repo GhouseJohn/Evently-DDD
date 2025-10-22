@@ -26,60 +26,69 @@ internal sealed class ProcessOutboxJob(
 
     public async Task Execute(IJobExecutionContext context)
     {
-        logger.LogInformation("{Module} - Beginning to process outbox messages", ModuleName);
-
-        await using DbConnection connection = await dbConnectionFactory.OpenConnectionAsync();
-        await using DbTransaction transaction = await connection.BeginTransactionAsync();
-
-        IReadOnlyList<OutboxMessageResponse> outboxMessages = await GetOutboxMessagesAsync(connection, transaction);
-
-        foreach (OutboxMessageResponse outboxMessage in outboxMessages)
+        try
         {
-            Exception? exception = null;
+            logger.LogInformation("{Module} - Beginning to process outbox messages", ModuleName);
 
-            try
+            await using DbConnection connection = await dbConnectionFactory.OpenConnectionAsync();
+            await using DbTransaction transaction = await connection.BeginTransactionAsync();
+
+            IReadOnlyList<OutboxMessageResponse> outboxMessages = await GetOutboxMessagesAsync(connection, transaction);
+
+            foreach (OutboxMessageResponse outboxMessage in outboxMessages)
             {
-                IDomainEvent domainEvent = JsonConvert.DeserializeObject<IDomainEvent>(
-                    outboxMessage.Content,
-                    SerializerSettings.Instance)!;
+                Exception? exception = null;
 
-                using IServiceScope scope = serviceScopeFactory.CreateScope();
-
-                IEnumerable<IDomainEventHandler> handlers = DomainEventHandlersFactory.GetHandlers(
-                    domainEvent.GetType(),
-                    scope.ServiceProvider,
-                    Application.AssemblyReference.Assembly);
-
-                foreach (IDomainEventHandler domainEventHandler in handlers)
+                try
                 {
-                    await domainEventHandler.Handle(domainEvent, context.CancellationToken);
+                    IDomainEvent domainEvent = JsonConvert.DeserializeObject<IDomainEvent>(
+                        outboxMessage.Content,
+                        SerializerSettings.Instance)!;
+
+                    using IServiceScope scope = serviceScopeFactory.CreateScope();
+
+                    IEnumerable<IDomainEventHandler> handlers = DomainEventHandlersFactory.GetHandlers(
+                        domainEvent.GetType(),
+                        scope.ServiceProvider,
+                        Application.AssemblyReference.Assembly);
+
+                    foreach (IDomainEventHandler domainEventHandler in handlers)
+                    {
+                        await domainEventHandler.Handle(domainEvent, context.CancellationToken);
+                    }
                 }
-            }
-            catch (Exception caughtException)
-            {
-                logger.LogError(
-                    caughtException,
-                    "{Module} - Exception while processing outbox message {MessageId}",
-                    ModuleName,
-                    outboxMessage.Id);
+                catch (Exception caughtException)
+                {
+                    logger.LogError(
+                        caughtException,
+                        "{Module} - Exception while processing outbox message {MessageId}",
+                        ModuleName,
+                        outboxMessage.Id);
 
-                exception = caughtException;
+                    exception = caughtException;
+                }
+
+                await UpdateOutboxMessageAsync(connection, transaction, outboxMessage, exception);
             }
 
-            await UpdateOutboxMessageAsync(connection, transaction, outboxMessage, exception);
+            await transaction.CommitAsync();
+
+            logger.LogInformation("{Module} - Completed processing outbox messages", ModuleName);
         }
-
-        await transaction.CommitAsync();
-
-        logger.LogInformation("{Module} - Completed processing outbox messages", ModuleName);
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "{Module} - Exception while processing outbox messages", ModuleName);
+        }
     }
 
     private async Task<IReadOnlyList<OutboxMessageResponse>> GetOutboxMessagesAsync(
         IDbConnection connection,
         IDbTransaction transaction)
     {
-        string sql =
-            $"""
+        try
+        {
+            string sql =
+                $"""
              SELECT
                 id AS {nameof(OutboxMessageResponse.Id)},
                 content AS {nameof(OutboxMessageResponse.Content)}
@@ -90,11 +99,17 @@ internal sealed class ProcessOutboxJob(
              FOR UPDATE
              """;
 
-        IEnumerable<OutboxMessageResponse> outboxMessages = await connection.QueryAsync<OutboxMessageResponse>(
-            sql,
-            transaction: transaction);
+            IEnumerable<OutboxMessageResponse> outboxMessages = await connection.QueryAsync<OutboxMessageResponse>(
+                sql,
+                transaction: transaction);
 
-        return outboxMessages.ToList();
+            return outboxMessages.ToList();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message, "{Module} - Exception while retrieving outbox messages", ModuleName);
+            throw;
+        }
     }
 
     private async Task UpdateOutboxMessageAsync(
