@@ -1,4 +1,5 @@
-﻿using BuildingBlock.Common.Presentation.Endpoints;
+﻿using BuildingBlock.Common.InfraStructure.outbox;
+using BuildingBlock.Common.Presentation.Endpoints;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.Configuration;
@@ -32,6 +33,7 @@ public static class UserModuleInfrastructure
                     databaseConnectionString,
                     npgsqlOptions => npgsqlOptions
                         .MigrationsHistoryTable(HistoryRepository.DefaultTableName, Schemas.Events))
+                .AddInterceptors(sp.GetRequiredService<InsertOutboxMessagesInterceptor>())
                 .UseSnakeCaseNamingConvention());
 
 

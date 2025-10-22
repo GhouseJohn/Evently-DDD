@@ -8,9 +8,9 @@ public abstract class Entity
     {
         _domainEvents.Add(domainEvent);
     }
-    public void RemoveDomainEvent(IDomainEvent domainEvent)
+    public void ClearDomainEvents()
     {
-        _domainEvents.Remove(domainEvent);
+        _domainEvents.Clear();
     }
 
 }
