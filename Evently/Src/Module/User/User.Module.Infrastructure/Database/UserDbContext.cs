@@ -20,5 +20,5 @@ public sealed class UserDbContext : DbContext, IUnitOfWork
 
 internal static class Schemas
 {
-    internal const string Events = "user";
+    internal const string Events = "users";
 }
