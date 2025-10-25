@@ -8,12 +8,12 @@ namespace User.Module.Application.Repo.GetUserDetails;
 
 public record GetUserByIdRequest(Guid Id) : IQuery<Result<GetUserByIdResponse>>;
 public record GetUserByIdResponse(UserModel UserModel);
-internal sealed class GetUserByIdQueryHandler(IUserRepo userRepo)
+internal sealed class GetUserByIdQueryHandler(IUserRepository userRepo)
                 : IQueryHandler<GetUserByIdRequest, Result<GetUserByIdResponse>>
 {
     public async Task<Result<GetUserByIdResponse>> Handle(GetUserByIdRequest request, CancellationToken cancellationToken)
     {
-        UserModel result = await userRepo.GetAllUser(request.Id, cancellationToken);
+        UserModel result = await userRepo.GetAsync(request.Id, cancellationToken);
         if (result is null)
         {
             return Result.Failure<GetUserByIdResponse>(UserErrors.NotFound(request.Id));

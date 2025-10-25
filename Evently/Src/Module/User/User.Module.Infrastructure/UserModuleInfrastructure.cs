@@ -7,10 +7,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using User.Module.Application;
-using User.Module.Application.Repo;
 using User.Module.Domain;
 using User.Module.Infrastructure.Database;
-using User.Module.Infrastructure.Event;
 using User.Module.Infrastructure.outbox;
 using User.Module.Infrastructure.User;
 namespace User.Module.Infrastructure;
@@ -41,8 +39,7 @@ public static class UserModuleInfrastructure
                 .UseSnakeCaseNamingConvention());
 
         services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<UserDbContext>());
-        services.AddScoped<IEventRepository, EventRepository>();
-        services.AddScoped<IUserRepo, UserRepo>();
+        services.AddScoped<IUserRepository, UserRepository>();
         services.ConfigureOptions<ConfigureProcessOutboxJob>();
         services.Configure<OutboxOptions>(configuration.GetSection("Users:Outbox"));
 

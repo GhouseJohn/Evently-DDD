@@ -10,7 +10,7 @@ public record CreateUserHandlerRequest(string UserName, string Email, string Add
                                         : ICommand<Result<CreateUserHandlerResponse>>;
 public record CreateUserHandlerResponse(Guid UserId);
 
-internal sealed class CreateUserCommandHandler(IEventRepository eventRepository, IUnitOfWork unitOfWork)
+internal sealed class CreateUserCommandHandler(IUserRepository eventRepository, IUnitOfWork unitOfWork)
                             : ICommandHandler<CreateUserHandlerRequest, Result<CreateUserHandlerResponse>>
 {
     public async Task<Result<CreateUserHandlerResponse>> Handle(CreateUserHandlerRequest request, CancellationToken cancellationToken)

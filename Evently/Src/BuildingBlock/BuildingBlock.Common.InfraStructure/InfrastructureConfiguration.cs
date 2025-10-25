@@ -13,7 +13,7 @@ namespace BuildingBlock.Common.InfraStructure;
 public static class InfrastructureConfiguration
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services,
-                                  string databaseConnectionString, string redisConnectionString)
+                           string databaseConnectionString, string redisConnectionString)
     {
         NpgsqlDataSource npgsqlDataSource = new NpgsqlDataSourceBuilder(databaseConnectionString).Build();
         services.TryAddSingleton(npgsqlDataSource);
@@ -27,6 +27,7 @@ public static class InfrastructureConfiguration
 
             services.AddStackExchangeRedisCache(options =>
               options.ConnectionMultiplexerFactory = () => Task.FromResult(connectionMultiplexer));
+
         }
         catch
         {

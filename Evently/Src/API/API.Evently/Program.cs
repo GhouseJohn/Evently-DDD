@@ -36,13 +36,12 @@ WebApplication app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
-#pragma warning disable S125 // Sections of code should not be commented out
+
 {
     app.UseSwagger();
     app.UseSwaggerUI();
     app.ApplyMigrations();
 }
-#pragma warning restore S125 // Sections of code should not be commented out
 
 
 app.MapControllers();
