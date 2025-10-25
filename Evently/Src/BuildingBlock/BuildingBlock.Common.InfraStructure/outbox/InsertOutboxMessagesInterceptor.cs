@@ -21,37 +21,6 @@ public sealed class InsertOutboxMessagesInterceptor : SaveChangesInterceptor
 
     private static void InsertOutboxMessages(DbContext context)
     {
-        #region originalcode
-
-#pragma warning disable S125 // Sections of code should not be commented out
-
-        //var outboxMessages = context
-        //    .ChangeTracker
-        //    .Entries<Entity>()
-        //    .Select(entry => entry.Entity)
-        //    .SelectMany(entity =>
-
-        //    {
-        //        IReadOnlyCollection<IDomainEvent> domainEvents = entity.DomainEvents;
-
-        //        entity.ClearDomainEvents();
-
-        //        return domainEvents;
-        //    })
-        //    .Select(domainEvent => new OutboxMessage
-        //    {
-        //        Id = domainEvent.Id,
-        //        Type = domainEvent.GetType().Name,
-        //        Content = JsonConvert.SerializeObject(domainEvent, SerializerSettings.Instance),
-        //        OccurredOnUtc = domainEvent.OccuredOn
-        //    })
-        //    .ToList();
-
-        //context.Set<OutboxMessage>().AddRange(outboxMessages);
-#pragma warning restore S125 // Sections of code should not be commented out
-
-        #endregion
-
         IEnumerable<Entity> entities = context.ChangeTracker.Entries<Entity>().Select(e => e.Entity);
 
         IEnumerable<IDomainEvent> domainEvents = entities
