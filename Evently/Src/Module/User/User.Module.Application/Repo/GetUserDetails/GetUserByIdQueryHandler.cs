@@ -6,10 +6,10 @@ using User.Module.Domain.Models;
 namespace User.Module.Application.Repo.GetUserDetails;
 
 
-public record GetUserByIdRequest(Guid Id) : IQuery<Result<GetUserByIdResponse>>;
+public record GetUserByIdRequest(Guid Id) : IQuery<GetUserByIdResponse>;
 public record GetUserByIdResponse(UserModel UserModel);
 internal sealed class GetUserByIdQueryHandler(IUserRepository userRepo)
-                : IQueryHandler<GetUserByIdRequest, Result<GetUserByIdResponse>>
+                : IQueryHandler<GetUserByIdRequest, GetUserByIdResponse>
 {
     public async Task<Result<GetUserByIdResponse>> Handle(GetUserByIdRequest request, CancellationToken cancellationToken)
     {

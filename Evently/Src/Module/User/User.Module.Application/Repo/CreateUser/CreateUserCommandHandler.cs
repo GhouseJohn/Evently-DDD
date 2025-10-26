@@ -7,11 +7,11 @@ namespace User.Module.Application.Repo.CreateUser;
 
 
 public record CreateUserHandlerRequest(string UserName, string Email, string Address)
-                                        : ICommand<Result<CreateUserHandlerResponse>>;
+                                        : ICommand<CreateUserHandlerResponse>;
 public record CreateUserHandlerResponse(Guid UserId);
 
 internal sealed class CreateUserCommandHandler(IUserRepository eventRepository, IUnitOfWork unitOfWork)
-                            : ICommandHandler<CreateUserHandlerRequest, Result<CreateUserHandlerResponse>>
+                            : ICommandHandler<CreateUserHandlerRequest, CreateUserHandlerResponse>
 {
     public async Task<Result<CreateUserHandlerResponse>> Handle(CreateUserHandlerRequest request, CancellationToken cancellationToken)
     {

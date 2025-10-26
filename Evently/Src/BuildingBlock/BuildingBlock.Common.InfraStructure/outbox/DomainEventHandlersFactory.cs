@@ -35,4 +35,3 @@ public static class DomainEventHandlersFactory
         return handlers;
     }
 }
-

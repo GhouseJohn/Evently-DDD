@@ -1,8 +1,11 @@
 using System.Reflection;
 using API.Evently.Extensions;
+using API.Evently.OpenTelemetry;
 using BuildingBlock.Common.Application;
 using BuildingBlock.Common.InfraStructure;
 using BuildingBlock.Common.Presentation.Endpoints;
+using Evently.Common.Infrastructure.Configuration;
+using Evently.Common.Infrastructure.EventBus;
 using User.Module.Infrastructure;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -18,7 +21,14 @@ builder.Services.AddApplication(moduleApplicationAssemblies);
 #region Connectionstring
 string databaseConnectionString = builder.Configuration.GetConnectionString("Database")!;
 string redisConnectionString = builder.Configuration.GetConnectionString("Cache")!;
-builder.Services.AddInfrastructure(databaseConnectionString, redisConnectionString);
+var rabbitMqSettings = new RabbitMqSettings(builder.Configuration.GetConnectionStringOrThrow("Queue"));
+builder.Services.AddInfrastructure(
+    DiagnosticsConfig.ServiceName,
+    [
+    ],
+    rabbitMqSettings,
+    databaseConnectionString,
+    redisConnectionString);
 
 #endregion
 builder.Configuration.AddModuleConfiguration(["users", "events", "ticketing", "attendance"]);
@@ -29,7 +39,6 @@ builder.Services.AddSwaggerGen(options =>
 {
     options.CustomSchemaIds(t => t.FullName?.Replace("+", "."));
 });
-
 
 WebApplication app = builder.Build();
 
@@ -47,3 +56,5 @@ if (app.Environment.IsDevelopment())
 app.MapControllers();
 app.MapEndpoints();
 app.Run();
+
+internal sealed partial class Program;

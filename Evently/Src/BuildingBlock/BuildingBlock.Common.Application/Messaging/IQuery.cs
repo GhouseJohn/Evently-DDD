@@ -1,7 +1,6 @@
-﻿using MediatR;
+﻿using BuildingBlock.Common.Domain;
+using MediatR;
 
 namespace BuildingBlock.Common.Application.Messaging;
-public interface IQuery<out TResponse> : IRequest<TResponse>
-    where TResponse : notnull
-{
-}
+
+public interface IQuery<TResponse> : IRequest<Result<TResponse>>;

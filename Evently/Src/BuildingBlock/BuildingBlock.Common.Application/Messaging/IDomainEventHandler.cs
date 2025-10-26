@@ -1,6 +1,7 @@
 ﻿using BuildingBlock.Common.Domain;
 
 namespace BuildingBlock.Common.Application.Messaging;
+
 public interface IDomainEventHandler<in TDomainEvent> : IDomainEventHandler
     where TDomainEvent : IDomainEvent
 {

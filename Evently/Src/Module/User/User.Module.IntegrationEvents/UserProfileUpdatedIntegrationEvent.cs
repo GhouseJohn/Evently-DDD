@@ -1,19 +1,26 @@
-﻿namespace User.Module.IntegrationEvents;
+﻿using Evently.Common.Application.EventBus;
+
+namespace User.Module.IntegrationEvents;
+
 public sealed class UserRegisteredIntegrationEvent : IntegrationEvent
 {
     public UserRegisteredIntegrationEvent(
         Guid id,
         DateTime occurredOnUtc,
-        Guid UserId,
-        string UserName,
-        string Email)
+        Guid userId,
+        string email,
+        string firstName)
         : base(id, occurredOnUtc)
     {
-        this.UserId = UserId;
-        this.Email = Email;
-        this.UserName = UserName;
+        UserId = userId;
+        Email = email;
+        FirstName = firstName;
     }
+
     public Guid UserId { get; init; }
-    public string UserName { get; init; }
+
     public string Email { get; init; }
+
+    public string FirstName { get; init; }
+
 }
