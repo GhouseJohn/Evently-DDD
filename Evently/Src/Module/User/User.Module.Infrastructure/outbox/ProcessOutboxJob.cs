@@ -47,10 +47,28 @@ internal sealed class ProcessOutboxJob(
 
                     using IServiceScope scope = serviceScopeFactory.CreateScope();
 
+                    Type[] domainEventHandlers = Application.AssemblyReference.Assembly.GetTypes()
+                                             .Where(t => t.IsAssignableTo(typeof(IDomainEventHandler))).ToArray();
+                    foreach (Type domainEventHandler in domainEventHandlers)
+                    {
+                        Console.WriteLine(domainEventHandler.Name);
+                    }
+
+                    Type[] domainEventHandlerTypes2 = Application.AssemblyReference.Assembly.GetTypes()
+                                .Where(t => t.GetInterfaces().Any(i => i.IsGenericType &&
+                         i.GetGenericTypeDefinition() == typeof(IDomainEventHandler<>))).ToArray();
+
+                    foreach (Type item in domainEventHandlerTypes2)
+                    {
+                        Console.WriteLine(item.Name);
+                    }
+
                     IEnumerable<IDomainEventHandler> handlers = DomainEventHandlersFactory.GetHandlers(
-                        domainEvent.GetType(),
-                        scope.ServiceProvider,
-                        Application.AssemblyReference.Assembly);
+                    domainEvent.GetType(),
+                    scope.ServiceProvider,
+                    Application.AssemblyReference.Assembly);
+
+
 
                     foreach (IDomainEventHandler domainEventHandler in handlers)
                     {

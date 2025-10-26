@@ -13,15 +13,21 @@ public static class DomainEventHandlersFactory
         IServiceProvider serviceProvider,
         Assembly assembly)
     {
+        // The key line is here. It will return the cached empty array if found.
         Type[] domainEventHandlerTypes = HandlersDictionary.GetOrAdd(
             $"{assembly.GetName().Name}{type.Name}",
             _ =>
             {
-                Type[] domainEventHandlerTypes = assembly.GetTypes()
-                    .Where(t => t.IsAssignableTo(typeof(IDomainEventHandler<>).MakeGenericType(type)))
+                Type handlerInterfaceType = typeof(IDomainEventHandler<>).MakeGenericType(type);
+
+                Type[] foundTypes = assembly.GetTypes()
+                    .Where(t => t.IsAssignableTo(handlerInterfaceType) &&
+                               !t.IsAbstract &&
+                               !t.IsInterface)
                     .ToArray();
 
-                return domainEventHandlerTypes;
+                // Check: If foundTypes is empty, that empty array is being cached!
+                return foundTypes;
             });
 
         List<IDomainEventHandler> handlers = [];

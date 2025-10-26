@@ -20,7 +20,12 @@ public sealed class UserModel : Entity
             Email = email,
             Address = address
         };
-        @event.AddDomainEvent(new UserEventCreatedDomainEvent(@event.UserId));
+
+#pragma warning disable S125 // Sections of code should not be commented out
+        // @event.AddDomainEvent(new UserEventCreatedDomainEvent(@event.UserId));
+#pragma warning restore S125 // Sections of code should not be commented out
+
+        @event.AddDomainEvent(new UserRegisteredDomainEvent(@event.UserId));
         return @event;
     }
 }
