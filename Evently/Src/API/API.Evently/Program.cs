@@ -6,13 +6,19 @@ using BuildingBlock.Common.InfraStructure;
 using BuildingBlock.Common.Presentation.Endpoints;
 using Evently.Common.Infrastructure.Configuration;
 using Evently.Common.Infrastructure.EventBus;
+using Serilog;
 using User.Module.Infrastructure;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+
 
 builder.Services.AddControllers();
+
+
+builder.Host.UseSerilog((context, logfile) =>
+                logfile.ReadFrom.Configuration(context.Configuration));
+
 
 Assembly[] moduleApplicationAssemblies = [
     User.Module.Application.AssemblyReference.Assembly
@@ -51,7 +57,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
     app.ApplyMigrations();
 }
-
+app.UseSerilogRequestLogging();
 
 app.MapControllers();
 app.MapEndpoints();
