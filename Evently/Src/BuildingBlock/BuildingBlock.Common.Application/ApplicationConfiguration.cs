@@ -13,7 +13,7 @@ public static class ApplicationConfiguration
             config.RegisterServicesFromAssemblies(moduleAssemblies);
 
             config.AddOpenBehavior(typeof(RequestLoggingPipelineBehavior<,>));
-
+            config.AddOpenBehavior(typeof(ExceptionHandlingPipelineBehavior<,>));
 
         });
         return services;
