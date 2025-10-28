@@ -7,6 +7,8 @@ using BuildingBlock.Common.InfraStructure;
 using BuildingBlock.Common.Presentation.Endpoints;
 using Evently.Common.Infrastructure.Configuration;
 using Evently.Common.Infrastructure.EventBus;
+using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Serilog;
 using User.Module.Infrastructure;
 
@@ -36,6 +38,8 @@ builder.Services.AddInfrastructure(
     databaseConnectionString,
     redisConnectionString);
 
+builder.Services.AddHealthChecks().AddNpgSql(databaseConnectionString)
+    .AddRedis(redisConnectionString);
 #endregion
 builder.Configuration.AddModuleConfiguration(["users", "events", "ticketing", "attendance"]);
 builder.Services.AddEventsModule(builder.Configuration);
@@ -59,7 +63,10 @@ if (app.Environment.IsDevelopment())
 }
 app.UseSerilogRequestLogging();
 app.UseExceptionHandler();
-
+app.MapHealthChecks("health", new HealthCheckOptions
+{
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
 app.MapEndpoints();
 app.Run();
 
