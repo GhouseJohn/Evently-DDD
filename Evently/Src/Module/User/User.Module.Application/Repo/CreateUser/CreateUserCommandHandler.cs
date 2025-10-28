@@ -6,9 +6,9 @@ using User.Module.Domain.Models;
 namespace User.Module.Application.Repo.CreateUser;
 
 
-public record CreateUserHandlerRequest(string UserName, string Email, string Address)
+public sealed record CreateUserHandlerRequest(string UserName, string Email, string Address)
                                         : ICommand<CreateUserHandlerResponse>;
-public record CreateUserHandlerResponse(Guid UserId);
+public sealed record CreateUserHandlerResponse(Guid UserId);
 
 internal sealed class CreateUserCommandHandler(IUserRepository eventRepository, IUnitOfWork unitOfWork)
                             : ICommandHandler<CreateUserHandlerRequest, CreateUserHandlerResponse>

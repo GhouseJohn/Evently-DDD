@@ -4,4 +4,9 @@
     <ProjectReference Include="..\User.Module.Application\User.Module.Application.csproj" />
     <ProjectReference Include="..\User.Module.Presentation\User.Module.Presentation.csproj" />
   </ItemGroup>
+
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="Evently.Modules.Users.IntegrationTests" />
+	</ItemGroup>
 </Project>

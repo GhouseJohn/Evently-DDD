@@ -1,9 +1,9 @@
 ﻿using FluentValidation;
 
 namespace User.Module.Application.Repo.CreateUser;
-public sealed class UserRepoCommandValidation : AbstractValidator<CreateUserHandlerRequest>
+internal sealed class UserRepoCommandValidator : AbstractValidator<CreateUserHandlerRequest>
 {
-    public UserRepoCommandValidation()
+    public UserRepoCommandValidator()
     {
         RuleFor(u => u.UserName).NotEmpty().MaximumLength(5).MinimumLength(3);
         RuleFor(u => u.Address).NotEmpty();

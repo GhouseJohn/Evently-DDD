@@ -6,8 +6,8 @@ using User.Module.Domain.Models;
 namespace User.Module.Application.Repo.GetUserDetails;
 
 
-public record GetUserByIdRequest(Guid Id) : IQuery<GetUserByIdResponse>;
-public record GetUserByIdResponse(UserModel UserModel);
+public sealed record GetUserByIdRequest(Guid Id) : IQuery<GetUserByIdResponse>;
+public sealed record GetUserByIdResponse(UserModel UserModel);
 internal sealed class GetUserByIdQueryHandler(IUserRepository userRepo)
                 : IQueryHandler<GetUserByIdRequest, GetUserByIdResponse>
 {
