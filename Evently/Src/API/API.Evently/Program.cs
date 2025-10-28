@@ -1,5 +1,6 @@
 using System.Reflection;
 using API.Evently.Extensions;
+using API.Evently.MiddleWare;
 using API.Evently.OpenTelemetry;
 using BuildingBlock.Common.Application;
 using BuildingBlock.Common.InfraStructure;
@@ -11,19 +12,18 @@ using User.Module.Infrastructure;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-
-
 builder.Services.AddControllers();
-
-
 builder.Host.UseSerilog((context, logfile) =>
                 logfile.ReadFrom.Configuration(context.Configuration));
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
 
 
 Assembly[] moduleApplicationAssemblies = [
     User.Module.Application.AssemblyReference.Assembly
     ];
 builder.Services.AddApplication(moduleApplicationAssemblies);
+
 #region Connectionstring
 string databaseConnectionString = builder.Configuration.GetConnectionString("Database")!;
 string redisConnectionString = builder.Configuration.GetConnectionString("Cache")!;
@@ -58,8 +58,8 @@ if (app.Environment.IsDevelopment())
     app.ApplyMigrations();
 }
 app.UseSerilogRequestLogging();
+app.UseExceptionHandler();
 
-app.MapControllers();
 app.MapEndpoints();
 app.Run();
 
