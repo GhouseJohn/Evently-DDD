@@ -19,6 +19,6 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-	
+	<NoWarn>$(NoWarn);CA1515</NoWarn>
   </ItemGroup>
 </Project>

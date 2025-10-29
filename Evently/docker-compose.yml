@@ -64,3 +64,10 @@
       - 8082:80
     volumes: # <--- This line must be indented exactly under 'ports' and 'environment'
       - ./.containers/seq/data:/data
+  evently.aeger :
+   image : jaegertracing/all-in-one:latest
+   container_name: Evently.Jaeger
+   ports:
+   - "4317:4317"
+   - "4318:4318"
+   - "16686:16686"

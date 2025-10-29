@@ -9,9 +9,10 @@ using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Npgsql;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using Quartz;
 using StackExchange.Redis;
-
 
 namespace BuildingBlock.Common.InfraStructure;
 public static class InfrastructureConfiguration
@@ -22,6 +23,7 @@ public static class InfrastructureConfiguration
          RabbitMqSettings rabbitMqSettings,
                            string databaseConnectionString, string redisConnectionString)
     {
+
         NpgsqlDataSource npgsqlDataSource = new NpgsqlDataSourceBuilder(databaseConnectionString).Build();
         services.TryAddSingleton(npgsqlDataSource);
         services.AddQuartz(configurator =>
@@ -55,7 +57,21 @@ public static class InfrastructureConfiguration
             });
         });
 
-
+        //Open telemetry
+        services
+              .AddOpenTelemetry()
+              .ConfigureResource(resource => resource.AddService(serviceName))
+              .WithTracing(tracing =>
+              {
+                  tracing
+                      .AddAspNetCoreInstrumentation()
+                      .AddHttpClientInstrumentation()
+                      .AddEntityFrameworkCoreInstrumentation()
+                      .AddRedisInstrumentation()
+                      .AddNpgsql()
+                      .AddSource(MassTransit.Logging.DiagnosticHeaders.DefaultListenerName);
+                  tracing.AddOtlpExporter();
+              });
 
         try
         {
@@ -63,8 +79,7 @@ public static class InfrastructureConfiguration
             services.TryAddSingleton(connectionMultiplexer);
 
             services.AddStackExchangeRedisCache(options =>
-              options.ConnectionMultiplexerFactory = () => Task.FromResult(connectionMultiplexer));
-
+                options.ConnectionMultiplexerFactory = () => Task.FromResult(connectionMultiplexer));
         }
         catch (Exception ex)
         {

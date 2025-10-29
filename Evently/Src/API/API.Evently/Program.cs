@@ -61,6 +61,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
     app.ApplyMigrations();
 }
+app.UseLogContextTraceLogging();
 app.UseSerilogRequestLogging();
 app.UseExceptionHandler();
 app.MapHealthChecks("health", new HealthCheckOptions

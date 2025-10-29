@@ -15,5 +15,6 @@
       "ConfidentialClientSecret": "",
       "PublicClientId": ""
     }
-  }
+  },
+  "OTEL_EXPORTER_OTLP_ENDPOINT": ""
 }
