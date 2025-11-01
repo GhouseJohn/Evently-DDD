@@ -1,20 +1,29 @@
-﻿services:
+services:
   api.evently:
     image: ${DOCKER_REGISTRY-}apievently
     build:
       context: .
       dockerfile: Src/API/API.Evently/Dockerfile
     ports:
-      - 5000:8080
-      - 5001:8081
-    # 1. New dependency condition
+      - "5000:8080"
+      - "5001:8081"
     depends_on:
       evently.database:
-        condition: service_healthy # Wait until the DB health check passes
+        condition: service_healthy
+      evently.redis:
+        condition: service_healthy
+      evently.queue:
+        condition: service_healthy
+    healthcheck: # Added Healthcheck for API service readiness
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
     environment:
-      # Use the Docker Service Name and Internal Port (5432) for container-to-container connections
       - Database__Host=evently.database
       - Database__Port=5432
+    networks:
+      - evently-network
 
   evently.database:
     image: postgres:latest
@@ -25,34 +34,53 @@
     volumes:
       - ./containers/db/init:/docker-entrypoint-initdb.d
     ports:
-      - 5434:5432
-    
-    # 2. Add health check to verify database readiness
-    healthcheck:
+      - "5434:5432"
+    healthcheck: # Improved database healthcheck tolerance
       test: ["CMD-SHELL", "pg_isready -U postgres -d eventsetupDb"]
-      interval: 5s
+      interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 10
+      start_period: 45s # Added to prevent "unhealthy" error during startup
+    networks:
+      - evently-network
 
   evently.redis:
     image: redis:latest
     container_name: Evently.Redis
     restart: always
     ports:
-      - 6379:6379
+      - "6379:6379"
+    healthcheck: # Added Healthcheck for Redis
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 1s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+    networks:
+      - evently-network
+
   evently.queue:
     image: rabbitmq:management-alpine
     container_name: Evently.Queue
     hostname: evently-queue
     volumes:
-        - ./.containers/queue/data/:/var/lib/rabbitmq
-        - ./.containers/queue/log/:/var/log/rabbitmq
+      - ./.containers/queue/data/:/var/lib/rabbitmq
+      - ./.containers/queue/log/:/var/log/rabbitmq
     environment:
-        RABBITMQ_DEFAULT_USER: guest
-        RABBITMQ_DEFAULT_PASS: guest
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
     ports:
-      - 5672:5672
-      - 15672:15672
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck: # Added Healthcheck for RabbitMQ
+      test: ["CMD", "rabbitmq-diagnostics", "check_port_connectivity"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    networks:
+      - evently-network
+
   evently.seq:
     image: datalust/seq:latest
     container_name: Evently.Seq
@@ -60,14 +88,31 @@
       - ACCEPT_EULA=Y
       - SEQ_FIRSTRUN_ADMINPASSWORD=123
     ports:
-      - 5341:5341
-      - 8082:80
-    volumes: # <--- This line must be indented exactly under 'ports' and 'environment'
+      - "5341:5341"
+      - "8082:80"
+    volumes:
       - ./.containers/seq/data:/data
-  evently.aeger :
-   image : jaegertracing/all-in-one:latest
-   container_name: Evently.Jaeger
-   ports:
-   - "4317:4317"
-   - "4318:4318"
-   - "16686:16686"
+    networks:
+      - evently-network
+
+  evently.jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: Evently.Jaeger
+    ports:
+      - "4317:4317"
+      - "4318:4318"
+      - "16686:16686"
+    networks:
+      - evently-network
+
+# --- CRITICAL FIX: NETWORK DEFINITION ADDED HERE ---
+  api.gateway:
+    image: ${DOCKER_REGISTRY-}apigateway
+    build:
+      context: .
+      dockerfile: Src/API/API.GateWay/Dockerfile
+
+networks:
+  evently-network:
+    driver: bridge # Defines the network all services use
+

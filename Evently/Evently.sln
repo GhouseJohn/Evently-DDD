@@ -39,6 +39,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{2CBE39FF-6
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Evently.Modules.Users.ArchitectureTests", "Src\Module\User\Test\Evently.Modules.Users.ArchitectureTests\Evently.Modules.Users.ArchitectureTests.csproj", "{83353979-8FA9-4C9F-8155-B8AEF3448894}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "API.GateWay", "Src\API\API.GateWay\API.GateWay.csproj", "{2935E86C-B2EF-4835-8218-7186255EC57C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -93,6 +95,10 @@ Global
 		{83353979-8FA9-4C9F-8155-B8AEF3448894}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{83353979-8FA9-4C9F-8155-B8AEF3448894}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{83353979-8FA9-4C9F-8155-B8AEF3448894}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2935E86C-B2EF-4835-8218-7186255EC57C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2935E86C-B2EF-4835-8218-7186255EC57C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2935E86C-B2EF-4835-8218-7186255EC57C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2935E86C-B2EF-4835-8218-7186255EC57C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -114,6 +120,7 @@ Global
 		{A6BA937B-45D8-4632-85C7-B3C213EFA843} = {3CBA1D6A-D993-4FCB-9E33-5A878ABCC671}
 		{2CBE39FF-65C5-4EE9-88B2-F141B865A029} = {3CBA1D6A-D993-4FCB-9E33-5A878ABCC671}
 		{83353979-8FA9-4C9F-8155-B8AEF3448894} = {2CBE39FF-65C5-4EE9-88B2-F141B865A029}
+		{2935E86C-B2EF-4835-8218-7186255EC57C} = {4BF658B8-80AD-433A-9FE6-CE426C354628}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {09682A11-A65F-4223-B2D6-2C1ED23C00C2}
