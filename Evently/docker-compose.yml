@@ -65,7 +65,8 @@ services:
     hostname: evently-queue
     volumes:
       - ./.containers/queue/data/:/var/lib/rabbitmq
-      - ./.containers/queue/log/:/var/log/rabbitmq
+    # Note: ./.containers/queue/log/ should use a leading slash for volume mounting in Linux/Unix containers
+      - ./.containers/queue/log/:/var/log/rabbitmq 
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
@@ -77,7 +78,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-      start_period: 15s
+      start_period: 30s
     networks:
       - evently-network
 
@@ -104,15 +105,21 @@ services:
       - "16686:16686"
     networks:
       - evently-network
-
-# --- CRITICAL FIX: NETWORK DEFINITION ADDED HERE ---
+      
+  # CRITICAL FIX 1: Moved inside the services block and corrected indentation
   api.gateway:
     image: ${DOCKER_REGISTRY-}apigateway
     build:
       context: .
       dockerfile: Src/API/API.GateWay/Dockerfile
+    ports:
+      - 3000:8080
+      - 3001:8081
+    # CRITICAL FIX 2: Must be on the same network to resolve 'api.evently'
+    networks:
+      - evently-network
 
+# --- NETWORK DEFINITION (Correctly placed at the root level) ---
 networks:
   evently-network:
     driver: bridge # Defines the network all services use
-
