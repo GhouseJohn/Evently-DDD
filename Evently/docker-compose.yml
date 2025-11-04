@@ -1,3 +1,5 @@
+version: '3.9'
+
 services:
   api.evently:
     image: ${DOCKER_REGISTRY-}apievently
@@ -118,6 +120,23 @@ services:
     # CRITICAL FIX 2: Must be on the same network to resolve 'api.evently'
     networks:
       - evently-network
+    # Key clock SetUp
+  evently.identity:
+    image: quay.io/keycloak/keycloak:latest
+    command: start-dev --import-realm
+    environment:
+      - KC_HEALTH_ENABLED=true
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+    volumes:
+      - ./.containers/identity:/opt/keycloak/data
+      - ./.files:/opt/keycloak/data/import
+    ports:
+      - 18080:8080
+    networks:  # Add this section to connect to the evently-network
+      - evently-network
+
+  
 
 # --- NETWORK DEFINITION (Correctly placed at the root level) ---
 networks:

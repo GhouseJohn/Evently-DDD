@@ -39,7 +39,9 @@ builder.Services.AddInfrastructure(
     redisConnectionString);
 
 builder.Services.AddHealthChecks().AddNpgSql(databaseConnectionString)
-    .AddRedis(redisConnectionString);
+    .AddRedis(redisConnectionString)
+    .AddUrlGroup(new Uri(builder.Configuration.GetValue<string>("KeyCloak:HealthUrl")!), HttpMethod.Get, "KeyCloak");
+
 #endregion
 builder.Configuration.AddModuleConfiguration(["users", "events", "ticketing", "attendance"]);
 builder.Services.AddEventsModule(builder.Configuration);
@@ -69,6 +71,8 @@ app.MapHealthChecks("health", new HealthCheckOptions
     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
 });
 app.MapEndpoints();
+app.UseAuthentication();
+app.UseAuthorization();
 app.Run();
 
 internal sealed partial class Program;

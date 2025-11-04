@@ -1,5 +1,6 @@
 ﻿using BuildingBlock.Common.Application.Clock;
 using BuildingBlock.Common.Application.Data;
+using BuildingBlock.Common.InfraStructure.Authentication;
 using BuildingBlock.Common.InfraStructure.Clock;
 using BuildingBlock.Common.InfraStructure.Date;
 using BuildingBlock.Common.InfraStructure.outbox;
@@ -23,6 +24,7 @@ public static class InfrastructureConfiguration
          RabbitMqSettings rabbitMqSettings,
                            string databaseConnectionString, string redisConnectionString)
     {
+        services.AddAuthenticationInternal();
 
         NpgsqlDataSource npgsqlDataSource = new NpgsqlDataSourceBuilder(databaseConnectionString).Build();
         services.TryAddSingleton(npgsqlDataSource);
